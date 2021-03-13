@@ -189,14 +189,25 @@ class LowLevelReader:
 
         return decoder
 
+    def enc_base36(n):
+        out = []
+        while n > 0:
+            n, r = divmod(n, 36)
+            out.append("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"[r])
+        return(''.join(reversed(out)))
+
     @staticmethod
     def decode_A_record(line):
-        id_addition = None if len(line) == 7 else line[7:].strip()
-        return {
-            'manufacturer': line[1:4],
-            'id': line[4:7],
-            'id_addition': id_addition
+        result = {
+            'manufacturer': line[1:4]
         }
+        if line[4:9].isdigit():
+            result['id'] = LowLevelReader.enc_base36(int(line[4:9]))
+            result['id_addition'] = None if len(line) == 9 else line[9:].strip()
+        else:
+            result['id'] = line[4:7]
+            result['id_addition'] = None if len(line) == 7 else line[7:].strip()
+        return result
 
     @staticmethod
     def decode_B_record(line):
