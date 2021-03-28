@@ -191,7 +191,7 @@ class LowLevelReader:
 
     def enc_base36(n):
         out = []
-        while n > 0:
+        while len(out) < 3:
             n, r = divmod(n, 36)
             out.append("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"[r])
         return(''.join(reversed(out)))
